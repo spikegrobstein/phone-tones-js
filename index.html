@@ -16,6 +16,38 @@
   var yaxis = [697, 770, 852, 941];
   var keypad = '123A456B789C*0#D';
 
+  var blueboxFreq = [700, 900, 1100, 1300, 1500, 1700];
+  var blueboxKeys = [
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    '0',
+    '11',
+    '12',
+    'KP',
+    'KP2',
+    'SP'
+  ];
+  var blueboxTones = {};
+
+  for (var i = 0; i < blueboxFreq.length; i++) {
+    for (var j = 0; j < i; j++) {
+      blueboxTones[blueboxKeys.shift()] = [
+        blueboxFreq[j],
+        blueboxFreq[i]
+      ]
+    }
+  }
+
+  blueboxKeys = null;
+
+
   function playSound(arr) {
     var buf = new Float32Array(arr.length)
     for (var i = 0; i < arr.length; i++) buf[i] = arr[i]
@@ -67,6 +99,34 @@
 
       playSound(arr);
     }
+  }
+
+  function blueDial(number) {
+    var arr = [],
+        volume = 0.2,
+        seconds = 0.25;
+
+    var n;
+
+    var toDial = number.split(/\s+/);
+    console.log(toDial);
+
+    for (var j = 0; j < toDial.length; j++) {
+      n = toDial[j];
+      var tones = blueboxTones[n];
+
+      console.log('dialing: ', n, tones)
+
+      for (var i = 0; i < context.sampleRate * seconds; i++) {
+        arr.push((sineWaveAt(i, tones[0]) + sineWaveAt(i, tones[1])) * volume);
+      }
+
+      for (var i = 0; i < context.sampleRate * .1; i++) {
+        arr.push(0);
+      }
+
+    }
+    playSound(arr);
   }
 
   function do_dial() {

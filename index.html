@@ -32,7 +32,7 @@
     '12',
     'KP',
     'KP2',
-    'SP'
+    'ST'
   ];
   var blueboxTones = {};
 
@@ -47,6 +47,87 @@
 
   blueboxKeys = null;
 
+  var redboxNickel = [ 1700, 2200 ];
+  var redboxBaseDuration = 66; //ms
+
+  function insertNickel() {
+    var arr = [],
+        volume = 0.2,
+        seconds = redboxBaseDuration / 1000,
+        tones = redboxNickel;
+
+    for (var i = 0; i < context.sampleRate * seconds; i++) {
+      arr.push((sineWaveAt(i, tones[0]) + sineWaveAt(i, tones[1])) * volume);
+    }
+
+    playSound(arr);
+  }
+
+  function insertDime() {
+    var arr = [],
+        volume = 0.2,
+        seconds = redboxBaseDuration / 1000,
+        tones = redboxNickel;
+
+    for (var i = 0; i < context.sampleRate * seconds; i++) {
+      arr.push((sineWaveAt(i, tones[0]) + sineWaveAt(i, tones[1])) * volume);
+    }
+
+    for (var i = 0; i < context.sampleRate * seconds; i++) {
+      arr.push(0);
+    }
+
+    for (var i = 0; i < context.sampleRate * seconds; i++) {
+      arr.push((sineWaveAt(i, tones[0]) + sineWaveAt(i, tones[1])) * volume);
+    }
+
+    playSound(arr);
+  }
+
+  function insertQuarter() {
+    var arr = [],
+        volume = 0.2,
+        seconds = redboxBaseDuration / 1000 / 2,
+        tones = redboxNickel;
+
+    for (var i = 0; i < context.sampleRate * seconds; i++) {
+      arr.push((sineWaveAt(i, tones[0]) + sineWaveAt(i, tones[1])) * volume);
+    }
+
+    for (var i = 0; i < context.sampleRate * seconds; i++) {
+      arr.push(0);
+    }
+
+    for (var i = 0; i < context.sampleRate * seconds; i++) {
+      arr.push((sineWaveAt(i, tones[0]) + sineWaveAt(i, tones[1])) * volume);
+    }
+
+    for (var i = 0; i < context.sampleRate * seconds; i++) {
+      arr.push(0);
+    }
+
+    for (var i = 0; i < context.sampleRate * seconds; i++) {
+      arr.push((sineWaveAt(i, tones[0]) + sineWaveAt(i, tones[1])) * volume);
+    }
+
+    for (var i = 0; i < context.sampleRate * seconds; i++) {
+      arr.push(0);
+    }
+
+    for (var i = 0; i < context.sampleRate * seconds; i++) {
+      arr.push((sineWaveAt(i, tones[0]) + sineWaveAt(i, tones[1])) * volume);
+    }
+
+    for (var i = 0; i < context.sampleRate * seconds; i++) {
+      arr.push(0);
+    }
+
+    for (var i = 0; i < context.sampleRate * seconds; i++) {
+      arr.push((sineWaveAt(i, tones[0]) + sineWaveAt(i, tones[1])) * volume);
+    }
+
+    playSound(arr);
+  }
 
   function playSound(arr) {
     var buf = new Float32Array(arr.length)
@@ -77,6 +158,23 @@
     return [x,y];
   }
 
+  function play2600() {
+    var arr = [],
+        volume = 0.2,
+        seconds = 2,
+        tone = 2600;
+
+    for (var i = 0; i < context.sampleRate * seconds; i++) {
+      arr.push((sineWaveAt(i, tone)) * volume);
+    }
+
+    for (var i = 0; i < context.sampleRate * .1; i++) {
+      arr.push(0);
+    }
+
+    playSound(arr);
+  }
+
   function dial(number) {
     var arr = [],
         volume = 0.2,
@@ -86,8 +184,6 @@
 
     for (var j = 0; j < number.length; j++) {
       var tones = tonesForKey(number[j]);
-
-      console.log('dialing: ' + number[j], tones)
 
       for (var i = 0; i < context.sampleRate * seconds; i++) {
         arr.push((sineWaveAt(i, tones[0]) + sineWaveAt(i, tones[1])) * volume);
@@ -109,13 +205,10 @@
     var n;
 
     var toDial = number.split(/\s+/);
-    console.log(toDial);
 
     for (var j = 0; j < toDial.length; j++) {
       n = toDial[j];
       var tones = blueboxTones[n];
-
-      console.log('dialing: ', n, tones)
 
       for (var i = 0; i < context.sampleRate * seconds; i++) {
         arr.push((sineWaveAt(i, tones[0]) + sineWaveAt(i, tones[1])) * volume);
@@ -140,4 +233,57 @@
 </body>
   <h1>Phone!</h1>
   <input id="number" type="text" value="123456"/><button onclick="do_dial()">Dial!</button>
+  <div>
+    <button onclick="dial('1')">1</button>
+    <button onclick="dial('2')">2</button>
+    <button onclick="dial('3')">3</button>
+  </div>
+  <div>
+    <button onclick="dial('4')">4</button>
+    <button onclick="dial('5')">5</button>
+    <button onclick="dial('6')">6</button>
+  </div>
+  <div>
+    <button onclick="dial('7')">7</button>
+    <button onclick="dial('8')">8</button>
+    <button onclick="dial('9')">9</button>
+  </div>
+  <div>
+    <button onclick="dial('*')">*</button>
+    <button onclick="dial('0')">0</button>
+    <button onclick="dial('#')">#</button>
+  </div>
+  <h2>redbox</h2>
+  <button onclick="insertNickel()">Nickel</button>
+  <button onclick="insertDime()">Dime</button>
+  <button onclick="insertQuarter()">Quarter</button>
+  <h2>bluebox</h2>
+  <div>
+    <button onclick="play2600()">2600hz</button>
+  </div>
+  <div>
+    <button onclick="blueDial('1')">1</button>
+    <button onclick="blueDial('2')">2</button>
+    <button onclick="blueDial('3')">3</button>
+  </div>
+  <div>
+    <button onclick="blueDial('4')">4</button>
+    <button onclick="blueDial('5')">5</button>
+    <button onclick="blueDial('6')">6</button>
+  </div>
+  <div>
+    <button onclick="blueDial('7')">7</button>
+    <button onclick="blueDial('8')">8</button>
+    <button onclick="blueDial('9')">9</button>
+  </div>
+  <div>
+    <button onclick="blueDial('11')">11/ST3</button>
+    <button onclick="blueDial('0')">0</button>
+    <button onclick="blueDial('12')">12/ST2</button>
+  </div>
+  <div>
+    <button onclick="blueDial('KP')">KP</button>
+    <button onclick="blueDial('KP2')">KP2</button>
+    <button onclick="blueDial('ST')">ST</button>
+  </div>
 </html>

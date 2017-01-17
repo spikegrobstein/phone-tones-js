@@ -1,0 +1,83 @@
+<html>
+  <body>
+<script>
+  /*
+           1209 Hz	1336 Hz  1477 Hz	1633 Hz
+    697 Hz		 1       2	     3	       A
+    770 Hz	   4	     5	     6	       B
+    852 Hz	   7	     8	     9 	       C
+    941 Hz	   *	     0	     #	       D
+  */
+  window.AudioContext = window.AudioContext || window.webkitAudioContext;
+
+  var context = new AudioContext();
+
+  var xaxis = [1209, 1336, 1477, 1633];
+  var yaxis = [697, 770, 852, 941];
+  var keypad = '123A456B789C*0#D';
+
+  function playSound(arr) {
+    var buf = new Float32Array(arr.length)
+    for (var i = 0; i < arr.length; i++) buf[i] = arr[i]
+    var buffer = context.createBuffer(1, buf.length, context.sampleRate)
+    buffer.copyToChannel(buf, 0)
+    var source = context.createBufferSource();
+    source.buffer = buffer;
+    source.connect(context.destination);
+    source.start(0);
+  }
+
+  function sineWaveAt(sampleNumber, tone) {
+    var sampleFreq = context.sampleRate / tone
+    return Math.sin(sampleNumber / (sampleFreq / (Math.PI*2)))
+  }
+
+  function tonesForKey(key) {
+    var index = keypad.indexOf(key);
+
+    if (key < 0) {
+      throw("Woops");
+    }
+
+    var x = xaxis[index % 4];
+    var y = yaxis[parseInt(index / 4)];
+
+    return [x,y];
+  }
+
+  function dial(number) {
+    var arr = [],
+        volume = 0.2,
+        seconds = 0.25;
+
+    var n;
+
+    for (var j = 0; j < number.length; j++) {
+      var tones = tonesForKey(number[j]);
+
+      console.log('dialing: ' + number[j], tones)
+
+      for (var i = 0; i < context.sampleRate * seconds; i++) {
+        arr.push((sineWaveAt(i, tones[0]) + sineWaveAt(i, tones[1])) * volume);
+      }
+
+      for (var i = 0; i < context.sampleRate * .1; i++) {
+        arr.push(0);
+      }
+
+      playSound(arr);
+    }
+  }
+
+  function do_dial() {
+    var field = document.getElementById('number');
+    var number = field.value;
+
+    dial(number);
+  }
+
+</script>
+</body>
+  <h1>Phone!</h1>
+  <input id="number" type="text" value="123456"/><button onclick="do_dial()">Dial!</button>
+</html>
